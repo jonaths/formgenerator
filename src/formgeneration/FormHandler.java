@@ -16,14 +16,14 @@ public final class FormHandler {
 
     TimeGenerator times;
     FormGenerator form;
-    float reference; // No se usa
+    float reference; 
     private float shapeArea;
     ArrayList<HashMap<String, Float>> schedule;
 
-    public FormHandler(TimeGenerator times, FormGenerator form, float reference) {
+    public FormHandler(TimeGenerator times, FormGenerator forms) {
         this.times = times;
-        this.form = form;
-        this.reference = reference;
+        this.form = forms;
+        this.reference = 0;
         this.shapeArea = 0;
         this.schedule = new ArrayList<>();
 
@@ -33,9 +33,12 @@ public final class FormHandler {
         }
 
         schedule = this.calculateSteps();
-
     }
 
+    /**
+     * Calcula el schedule
+     * @return 
+     */
     private ArrayList<HashMap<String, Float>> calculateSteps() {
         int c = 0;
         for (HashMap<String, Float> h : times.getTimeGeneratorDetail()) {
@@ -117,7 +120,6 @@ public final class FormHandler {
         float offset;
         // Si es la primera seccion el offset es 0
         if (c == 0) {
-//          offset = this.reference;
             offset = 0;
         // Si no es la primera seccion el offset es el valor final de la seccion anterior       
         } else {
@@ -147,18 +149,15 @@ public final class FormHandler {
         float baseHeight = 0;
         
         if (this.form.getParams(index).get("a") > 0){
-//            System.out.println(">0");
             triangleHeight = this.form.getSectionFinalValue(index);
             baseHeight = this.getOverallOffset(index, width);
             
         }
         if (this.form.getParams(index).get("a") == 0){
-//            System.out.println("=0");
             triangleHeight = 0;
             baseHeight = this.getOverallOffset(index, width);
         }
         if (this.form.getParams(index).get("a") < 0){
-//            System.out.println("<0");
             triangleHeight = this.form.getSectionOffset(index);
             baseHeight = this.form.getSectionFinalValue(index);
         }
@@ -171,6 +170,37 @@ public final class FormHandler {
         System.out.println("\n\nArea: " + "\n  Width: " + width + "\n  TrHeight: " + triangleHeight + ", TriangleArea: " + triangleArea + ", BHeight: " + baseHeight + ", BArea: " + baseArea + ", TArea: " + totalArea);
         
         return totalArea;
+    }
+    
+    /**
+     * Toma una referencia y devuelve el schedule ajustado a esa referencia
+     * @param reference
+     * @return 
+     */
+    public ArrayList<HashMap<String, Float>> getAdjustedSchedule(float reference){
+        ArrayList<HashMap<String, Float>> output = new ArrayList<>();
+        float range = this.times.getRange();
+        float divisions = this.times.getSize();
+        float width = range / divisions;
+        
+        // Para cada elemento de schedule, crea una version ajustada a reference
+        for (HashMap<String, Float>h : this.schedule){
+            HashMap<String, Float> element = new HashMap<>();
+            
+            // La altura ajustada asume que schedule está normalizado a 1, asi
+            // el area de cada seccion corresponde al % del área con la que
+            // contribuye
+            float adjustedHeight = h.get("ar") * (reference * range) / width;
+            
+            // Escribe los nuevos valores a output (schedule ajustado)
+            element.put("a",h.get("a"));
+            element.put("b",h.get("b"));
+            element.put("h", adjustedHeight);
+            element.put("ar", adjustedHeight * width  );
+            output.add(element);
+        }
+        
+        return output;
     }
 
     public void print() {
@@ -186,6 +216,12 @@ public final class FormHandler {
         return this.shapeArea;
     }
     
+    public void setReference (float reference){
+        this.reference = reference;
+    }
 
+    public float getReference(){
+        return this.reference;
+    }
 
 }
