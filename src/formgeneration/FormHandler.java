@@ -183,6 +183,9 @@ public final class FormHandler {
         float divisions = this.times.getSize();
         float width = range / divisions;
         
+        float desiredArea = reference * range;
+        float baseOffset = desiredArea * 0.2f / divisions / width;
+        
         // Para cada elemento de schedule, crea una version ajustada a reference
         for (HashMap<String, Float>h : this.schedule){
             HashMap<String, Float> element = new HashMap<>();
@@ -190,16 +193,17 @@ public final class FormHandler {
             // La altura ajustada asume que schedule está normalizado a 1, asi
             // el area de cada seccion corresponde al % del área con la que
             // contribuye
-            float adjustedHeight = h.get("ar") * (reference * range) / width;
+            float adjustedHeight = h.get("ar") * desiredArea * 0.8f / width;
             
             // Escribe los nuevos valores a output (schedule ajustado)
             element.put("a",h.get("a"));
             element.put("b",h.get("b"));
-            element.put("h", adjustedHeight);
-            element.put("ar", adjustedHeight * width  );
+            element.put("h", baseOffset + adjustedHeight);
+            element.put("ar", (baseOffset + adjustedHeight) * width  );
             output.add(element);
+            
         }
-        
+        System.out.println(baseOffset);
         return output;
     }
 
