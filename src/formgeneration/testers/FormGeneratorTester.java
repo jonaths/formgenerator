@@ -38,38 +38,21 @@ public class FormGeneratorTester {
         TestProfileCollection test = new TestProfileCollection();
 
         // Crea el perfil verdadero y lo llena con datos de prueba
-        ProfileCollection profiles = new ProfileCollection();
-        profiles = test.fillTestProfileCollection();
+        ProfileCollection profiles = test.fillTestProfileCollection();
+        profiles.printAll();
         
         // Crea un profile y lo agrega a ProfileCollection
         Profile testprofile = test.getTestProfile("profile2");
-        testprofile.print();
-        System.out.println(testprofile.getTotalArea());
-
-//        Profile adjustedprofile = testprofile.getAdjustedProfile(100.0f);
-//        adjustedprofile.print();
-//        System.out.println(adjustedprofile.getTotalArea());
         
+        System.out.println("\nAdjusted profile: ");
+        Profile adjustedprofile = testprofile.getAdjustedProfile(100.0f);
+        adjustedprofile.print();
+        adjustedprofile.printTotalArea();
         
-        profiles.addProfile("profile2", testprofile);
-        
-        System.out.println("profiles init");
-        System.out.println(profiles.getTotalArea());
-        profiles.printAll();
-        
-        System.out.println("Adjusted profiles... ");
-        ProfileCollection adjustedprofile = new ProfileCollection();
-        adjustedprofile = profiles.getAdjustedProfileCollection(10.0);
-        System.out.println(adjustedprofile.getTotalArea());
-        adjustedprofile.printAll();
-        
-        
-        System.out.println(profiles.getTotalArea());
-        
-        
-        
-        
-        
+        System.out.println("\nInverted Profile: ");
+        Profile invertedprofile = adjustedprofile.invert();
+        invertedprofile.print();
+        invertedprofile.printTotalArea();
     }
     
 }

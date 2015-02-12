@@ -5,8 +5,6 @@
  */
 package formgeneration.profilecollection;
 
-import formgeneration.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -94,6 +92,10 @@ public class ProfileCollection {
         this.totalArea = accArea;
         return accArea;
     }
+    
+    public void printTotalArea(){
+        System.out.println("    TotalArea: " + this.getTotalArea());
+    }
         
     /**
      * Imprime profile collection
@@ -105,8 +107,9 @@ public class ProfileCollection {
         else {
             System.out.println("Printing ProfileCollection: ");
             for (String s : this.profiles.keySet()){
-                System.out.println("\n" + s);
+                System.out.println("\n  " + s);
                 this.profiles.get(s).print();
+                this.profiles.get(s).printTotalArea();
             }
         }
         

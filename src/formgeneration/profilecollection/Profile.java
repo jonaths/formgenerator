@@ -123,26 +123,59 @@ public class Profile {
         return result;
     }
     
+    /**
+     * Ecualiza un profile de acuerdo a una referencia constante. 
+     * El area debajo de la referencia es igual al area del profile calculado
+     * en el mismo rango. 
+     * @param refArea : la referencia constante. 
+     * @return 
+     */
     public Profile getAdjustedProfile(double refArea){
         Profile adjustedProfile = new Profile();
         double currArea = this.getTotalArea();
-        System.out.println("refArea: " + refArea + " currArea: " + currArea );
-        for ( HashMap<String, Double> p : profile ){
+//        System.out.println("refArea: " + refArea + " currArea: " + currArea );
+        for ( HashMap<String, Double> p : this.profile ){
             double a = p.get("a");
             double b = p.get("b");
-            System.out.println("ah: " + p.get("ah") + " %area: " + p.get("ah") / currArea + " contArea: " + p.get("ah") / currArea * refArea);
+//            System.out.println("ah: " + p.get("ah") + " %area: " + p.get("ah") / currArea + " contArea: " + p.get("ah") / currArea * refArea);
             double h = (p.get("ah") / currArea * refArea) / Math.abs( a - b);
             adjustedProfile.add(a, b, h);
         }
         return adjustedProfile;
     }
+    
+    /**
+     * Invierte un profile alrededor de su promedio (el area se conserva igual)
+     * @return 
+     */
+    public Profile invert(){
+        Profile invertedProfile = new Profile();
+        for ( HashMap<String, Double> p : this.profile ){
+            double h = p.get("h");
+            double average = this.getTotalArea() / (Math.abs(this.getMax() - this.getMin()));
+            //System.out.println("TotalArea:" + this.getTotalArea() + " Max:" + this.getMax() + " Min:" + this.getMin() + " Average:" + average);
+            
+            // Altura Nueva = Promedio - (Altura Original - Promedio)
+            double newh = 2 * average - h;
+            invertedProfile.add(p.get("a"), p.get("b"), newh);
+        }
+        return invertedProfile;
+    }
+    
+    public ArrayList<HashMap<String, Double>> get(){
+        return this.profile;
+    }
 
     public void print() {
-        System.out.println(this.profile);
+        System.out.println("    " + "Profile: " + this.profile);
     }
     
     public double getTotalArea(){
         return this.area;
+    }
+    
+    public void printTotalArea(){
+        System.out.println("    " + "TotalArea: " + this.getTotalArea());
     }
     
     public double getMin(){
